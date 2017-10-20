@@ -12,6 +12,7 @@ public class GameManager {
     public static int gameMode;
     public static Board board;
     public static String result;
+    public static UserInterface ui;
     
     /**
      * X will always be the first player.

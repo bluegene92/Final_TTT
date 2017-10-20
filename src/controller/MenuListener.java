@@ -27,7 +27,7 @@ public class MenuListener implements ActionListener {
             Main.userInterface.dispose();
             Main.hva.displayHVA();
             Main.hva.setVisible(true);
-            
+            Main.gameManager.ui = Main.hva;
             
         } else if (source == Menu.avaButton) {
             
@@ -40,7 +40,7 @@ public class MenuListener implements ActionListener {
             Main.userInterface.dispose();
             Main.ava.displayAVA();
             Main.ava.setVisible(true);
-            
+            Main.gameManager.ui = Main.ava;
             
         } else if (source == Menu.startHVAGameButton) {
             
@@ -72,11 +72,10 @@ public class MenuListener implements ActionListener {
             } else if (GameManager.gameMode == GameState.AVA_MODE) {
                 Menu.startAVAGameButton.setEnabled(false);
             }
-            
-            
-            Menu.playAgainButton.setEnabled(false);
-            UserInterface.board.clearBoard();
 
+            Menu.playAgainButton.setEnabled(false);
+            GameManager.board.clearBoard();
+            GameManager.ui.statusBar.setText("Play again: X's turn");
             
         } // End if
         

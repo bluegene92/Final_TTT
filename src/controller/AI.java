@@ -3,18 +3,26 @@ package controller;
 
 import controller.GameManager;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Cell;
 import model.GameState;
+import model.Player;
 import view.Board;
+import view.UserInterface;
 
-public class AI {
+public class AI implements Runnable {
     
-
+    private Thread thread;
+    private String threadName;
+    
     public static double maxPly;
     public static int bestPosition;
     public static int iteration = 0; // For testing purpose
     public int negativeInfinity = Integer.MIN_VALUE;
     public int positiveInfinity = Integer.MAX_VALUE;
+ 
     
     
     /**
@@ -62,10 +70,10 @@ public class AI {
             int position = availableCells.get(i).position;
             
             
-            if (player.equalsIgnoreCase(GameState.O_PLAYER)) {
-                GameManager.board.selectCell(position, GameState.O_PLAYER);
+            if (player.equalsIgnoreCase(Player.O)) {
+                GameManager.board.selectCell(position, Player.O);
                 System.out.println("Place O in position: " + position + " depth = " + depth);
-                int currentScore = minimax(board, GameState.X_PLAYER, depth+1);
+                int currentScore = minimax(board, Player.X, depth+1);
                 min = Math.min(currentScore, min);
                 
                 
@@ -96,8 +104,8 @@ public class AI {
                     }
                  */
             } else {
-                GameManager.board.selectCell(position, GameState.X_PLAYER);
-                int currentScore = minimax(board, GameState.O_PLAYER, depth+1);
+                GameManager.board.selectCell(position, Player.X);
+                int currentScore = minimax(board, Player.O, depth+1);
                 max = Math.max(currentScore, max);
                 
                 if (max == 1) {
@@ -113,7 +121,7 @@ public class AI {
         } // End for
         
         
-        return player.equalsIgnoreCase(GameState.X_PLAYER) ? max : min;
+        return player.equalsIgnoreCase(Player.X) ? max : min;
     } // End minimax
 
     
@@ -130,9 +138,9 @@ public int alphaBetaPruning(Board board, String player, int depth, int alpha, in
          * check for the winner. If X win, returns 10,
          * if O win returns -10, otherwise returns 0.
          */
-        if (GameManager.checkWinner(GameState.X_PLAYER)) {
+        if (GameManager.checkWinner(Player.X)) {
             return 10;
-        } else if (GameManager.checkWinner(GameState.O_PLAYER)) {
+        } else if (GameManager.checkWinner(Player.O)) {
             return -10;
         } else if (availableCells.isEmpty()) {
             return 0;
@@ -142,13 +150,13 @@ public int alphaBetaPruning(Board board, String player, int depth, int alpha, in
         /**
          * If the player is player X
          */
-        if (player.equalsIgnoreCase(GameState.X_PLAYER)) {
+        if (player.equalsIgnoreCase(Player.X)) {
             
             for (int i = 0; i < availableCells.size(); i++) {
                 iteration++;
                 int position = availableCells.get(i).position;
-                GameManager.board.selectCell(position, GameState.X_PLAYER);
-                int score = alphaBetaPruning(board, GameState.O_PLAYER, depth+1, alpha, beta);
+                GameManager.board.selectCell(position, Player.X);
+                int score = alphaBetaPruning(board, Player.O, depth+1, alpha, beta);
                 GameManager.board.undoMove(position);
                 
                 if (score > alpha) {
@@ -173,8 +181,8 @@ public int alphaBetaPruning(Board board, String player, int depth, int alpha, in
             for (int i = 0; i < availableCells.size(); i++) {
                 iteration++;
                 int position = availableCells.get(i).position;
-                GameManager.board.selectCell(position, GameState.O_PLAYER);
-                int score = alphaBetaPruning(board, GameState.X_PLAYER, depth+1, alpha, beta);
+                GameManager.board.selectCell(position, Player.O);
+                int score = alphaBetaPruning(board, Player.X, depth+1, alpha, beta);
                 GameManager.board.undoMove(position);
                 
                 if (score < beta) {
@@ -195,6 +203,16 @@ public int alphaBetaPruning(Board board, String player, int depth, int alpha, in
 
         
     } // End alphaBetaPruning
+
+
+    @Override
+    public void run() {
+        alphaBetaPruning(GameManager.board, Player.O, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+    
+    public void start() {
+        System.out.println("AI thread started");
+    }
     
     
 } // End AI

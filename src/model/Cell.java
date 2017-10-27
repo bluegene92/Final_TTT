@@ -1,15 +1,15 @@
 
 package model;
-
-
 import java.awt.Font;
 import javax.swing.JButton;
 
 
 public class Cell extends JButton {
+    
 
     private String fontFamily = "Courier New";
     private int fontSize = 30;
+    
     
     /**
      * Holds the position of the cell 0-8

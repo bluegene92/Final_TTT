@@ -3,6 +3,7 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.GameState;
+import model.Player;
 import view.Menu;
 import view.UserInterface;
 
@@ -52,7 +53,12 @@ public class MenuListener implements ActionListener {
             UserInterface.board.enable();
             UserInterface.menu.startHVAGameButton.setEnabled(false);
             UserInterface.statusBar.setText("User: X's turn");
-            
+            if (UserInterface.menu.readThresholdTime.getText().isEmpty()) {
+                GameManager.setTimer(10);
+            } else {
+                GameManager.setTimer(Integer.parseInt(UserInterface.menu.readThresholdTime.getText()));
+            }
+            UserInterface.menu.readThresholdTime.setEditable(false);
             
             
         } else if (source == Menu.startAVAGameButton) {
@@ -69,6 +75,13 @@ public class MenuListener implements ActionListener {
             System.out.println("play again");
             if (GameManager.gameMode == GameState.HVA_MODE) {
                 Menu.startHVAGameButton.setEnabled(false);
+                UserInterface.statusBar.setText("User: X's turn");
+                if (UserInterface.menu.readThresholdTime.getText().isEmpty()) {
+                    GameManager.setTimer(10);
+                } else {
+                    GameManager.setTimer(Integer.parseInt(UserInterface.menu.readThresholdTime.getText()));
+                }
+                UserInterface.menu.readThresholdTime.setEditable(false);
             } else if (GameManager.gameMode == GameState.AVA_MODE) {
                 Menu.startAVAGameButton.setEnabled(false);
             }
@@ -76,6 +89,7 @@ public class MenuListener implements ActionListener {
             Menu.playAgainButton.setEnabled(false);
             GameManager.board.clearBoard();
             GameManager.ui.statusBar.setText("Play again: X's turn");
+            GameManager.playerTurn = Player.X;
             
         } // End if
         

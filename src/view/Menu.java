@@ -1,8 +1,10 @@
 
 package view;
 import controller.MenuListener;
+import controller.TextInputListener;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,12 +20,15 @@ public class Menu extends JPanel {
     public static JButton startHVAGameButton;
     public static JButton startAVAGameButton;
     public static JButton playAgainButton;
+    
+    public static JTextField timeCountDown;
     public static JTextField readThresholdTime;
     public static JTextField readServerAddress;
     public static JTextField readPortNumber;
     private JPanel row1;
     private JPanel row2;
     private MenuListener menuListener;
+    private TextInputListener textInputListener;
 
     
     /**
@@ -32,6 +37,7 @@ public class Menu extends JPanel {
      */
     public void mainMenu() {
         menuListener = new MenuListener();
+        textInputListener = new TextInputListener();
         row1 = new JPanel();
         row2 = new JPanel();
         
@@ -70,11 +76,20 @@ public class Menu extends JPanel {
      */
     public void hvaMenu() {
         menuListener = new MenuListener();
-        setLayout(new GridLayout(3, 1));
+        setLayout(new GridLayout(4, 1));
         
+        JPanel timeCountDownPanel = new JPanel();
+        timeCountDownPanel.setLayout(new FlowLayout());
+        timeCountDown = new JTextField();
+        timeCountDown.setEditable(false);
+        timeCountDown.setText("0 seconds");
+        timeCountDown.setPreferredSize(new Dimension(200, 100));
+        timeCountDown.setFont(new Font("Courier New", Font.BOLD, 30));
+        timeCountDownPanel.add(timeCountDown);
         
         readThresholdTime = new JTextField();
         readThresholdTime.setPreferredSize(new Dimension(100, 30));
+        readThresholdTime.getDocument().addDocumentListener(textInputListener);
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
@@ -98,6 +113,7 @@ public class Menu extends JPanel {
         playAgainButton.addActionListener(menuListener);
         playAgainPanel.add(playAgainButton);
         
+        add(timeCountDownPanel);
         add(inputPanel);
         add(startPanel);
         add(playAgainPanel);

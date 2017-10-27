@@ -21,6 +21,7 @@ public class UserInterface extends JFrame {
         setPreferredSize(new Dimension(600, 600));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Tic Tac Toe");
+        setLocationRelativeTo(null);
         
         menu = new Menu();
         menu.mainMenu();
@@ -34,8 +35,9 @@ public class UserInterface extends JFrame {
         setPreferredSize(new Dimension(900, 600));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Tic Tac Toe: Human vs. AI");
+        setLocationRelativeTo(null);
         
-        statusBar = new JTextField("Human vs. AI: Please specify a threshold time (default is 10 sec)...");
+        statusBar = new JTextField("Human vs. AI: Please specify a threshold time...");
         statusBar.setFont(new Font("Courier New", Font.BOLD, 16));
         statusBar.setEditable(false);
         add(statusBar, BorderLayout.NORTH);
@@ -62,6 +64,8 @@ public class UserInterface extends JFrame {
         setPreferredSize(new Dimension(900, 600));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Tic Tac Toe: AI vs. AI");
+        setLocationRelativeTo(null);
+        
         statusBar = new JTextField("AI vs. AI: Please enter in the server address and port number...");
         statusBar.setFont(new Font("Courier New", Font.BOLD, 16));
         statusBar.setEditable(false);

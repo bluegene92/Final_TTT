@@ -1,6 +1,8 @@
 
 package controller;
-import model.GameState;
+import java.util.Timer;
+import java.util.TimerTask;
+import model.Player;
 import view.Board;
 import view.Menu;
 import view.UserInterface;
@@ -13,13 +15,17 @@ public class GameManager {
     public static Board board;
     public static String result;
     public static UserInterface ui;
+    public static int timeInSeconds;
+    public static int timeTick;
+    public static Timer timer;
+    
     
     /**
      * X will always be the first player.
      * 0 - X turn
      * 1 - O turn
      */
-    public static String playerTurn = GameState.X_PLAYER;
+    public static String playerTurn = Player.X;
     
     
     public static AI ai;
@@ -28,8 +34,7 @@ public class GameManager {
     public GameManager() {
         ai = new AI();
     }
-    
-    
+
     
     public static boolean isGameOver() {
         board = UserInterface.board;
@@ -45,8 +50,29 @@ public class GameManager {
     public static void gameEnd() {
         UserInterface.board.disable();
         Menu.playAgainButton.setEnabled(true);
+        Menu.readThresholdTime.setEditable(true);
+        UserInterface.menu.timeCountDown.setText("0 seconds");
+        timer.cancel();
     }
     
+    
+    public static void setTimer(int time) {
+        timeTick = time;
+        timeInSeconds = time;
+        
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                UserInterface.menu.timeCountDown.setText(timeTick + " seconds");
+                timeTick--;
+                if (timeTick < 0) {
+                    timer.cancel();
+                    gameEnd();
+                    UserInterface.statusBar.setText("Out of time, you LOST!!!");
+                }
+            }
+        }, 0, 1000);
+    }
     
     
     /**

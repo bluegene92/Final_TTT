@@ -1,17 +1,10 @@
 
 package model;
+import java.time.Duration;
 import view.Board;
 
 
 public class GameState {
-
-    
-    /**
-     * Keep track of the player's turn
-     */
-    public static final String X_PLAYER = "X";
-    public static final String O_PLAYER = "O";
-    
     
     /**
      * X player always go first.
@@ -37,5 +30,7 @@ public class GameState {
     public static final int DEATH_MATCH = 23;
     public static Board board;
     
+    
+    public static Duration thresholdTime;
     
 } // End class GameState

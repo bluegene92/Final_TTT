@@ -38,7 +38,7 @@ public class GameManager {
     
     public static boolean isGameOver() {
         board = UserInterface.board;
-        return checkWinner("X") || checkWinner("O") || board.isBoardEmpty();
+        return checkCounterRow("X") || checkCounterRow("O") || board.isBoardEmpty();
     }
     
     
@@ -59,7 +59,6 @@ public class GameManager {
     public static void setTimer(int time) {
         timeTick = time;
         timeInSeconds = time;
-        
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
@@ -82,7 +81,7 @@ public class GameManager {
      * @param player The player to be evaluated.
      * @return boolean Return true if the player win.
      */
-    public static boolean checkWinner(String player) {
+    public static boolean checkCounterRow(String player) {
         if (board.checkWinCondition(0, 1, 2) && // Top row
             board.cells[0].getText().equalsIgnoreCase(player)) {
             return true;
@@ -111,5 +110,21 @@ public class GameManager {
         return false;
     } // End checkWinner()
     
+    
+    public static void checkForWinner() {
+        if (checkCounterRow(Player.X)) {
+            System.out.println("X win");
+            gameEnd();
+            ui.statusBar.setText("X Win!!!");
+        } else if (checkCounterRow(Player.O)) {
+            System.out.println("O win");
+            gameEnd();
+            ui.statusBar.setText("O Win!!!");
+        } else if (board.isBoardEmpty()){
+            System.out.println("DRAW");
+            gameEnd();
+            ui.statusBar.setText("Draw!!!");
+        }
+    }
     
 } // End class GameManager

@@ -6,7 +6,7 @@
  * separate systems compete over a server network.
  * 
  * @author Team 8 XOXO
- * @version 1.1
+ * @version 1.2
  * @since 2017-10-20
  */
 package controller;
@@ -26,30 +26,18 @@ public class Main {
 
         
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        
-            
+
             @Override
             public void run() {
-               
-                
+                gameManager = new GameManager();
                 userInterface = new UserInterface();
                 userInterface.initialize();
                 userInterface.setVisible(true);
-                
-                
                 hva = new UserInterface();
                 ava = new UserInterface();
                 
-                
-                gameManager = new GameManager();
-                
-                
             } // End run()
-            
-            
         }); // End invokeLater()
-        
-        
     } // End main();
     
     

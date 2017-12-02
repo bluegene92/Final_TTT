@@ -1,10 +1,9 @@
 package controller;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.Cell;
-import model.GameState;
 import model.Player;
+import view.HVAMenu;
 
 public class CellListener implements ActionListener {
 
@@ -12,26 +11,20 @@ public class CellListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         Cell c = (Cell) source;
-        
-        if ( GameManager.gameMode == GameState.HVA_MODE 
-            && GameManager.playerTurn == Player.X) {
-                GameManager.playerTurn = Player.O;    
-                GameManager.board.selectCell(c.position, Player.X);
-                GameManager.timeTick = GameManager.timeInSeconds;   
-                GameManager.ai.makeMove();
-                GameManager.checkForWinner();
-        } else if (GameManager.gameMode == GameState.AVA_MODE) {
-
-            /**
-             ************** TBD **********************
-             * Do something in AI vs. AI mode
-             */
-            
-            
-            
-            
-            
+        if (Main.gameManager.playerTurn.equalsIgnoreCase(Player.O)){ // Player O turn
+            Main.gameManager.board.selectCell(c.position, Player.O);
+            Main.gameManager.updatePlayerTurn();
+            Main.gameManager.myState.doAction(Main.gameManager);
         }
+        
+//        if (Main.gameManager.gameMode == GameState.HVA_MODE 
+//            && Main.gameManager.playerTurn == Player.X) {
+//                Main.gameManager.playerTurn = Player.O;    
+//                Main.gameManager.board.selectCell(c.position, Player.X);
+//                Main.gameManager.timeTick = Main.gameManager.timeInSeconds;   
+//                Main.gameManager.ai.makeMove();
+//                Main.gameManager.checkForWinner();
+//        }
         
         
         

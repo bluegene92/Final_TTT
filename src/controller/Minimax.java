@@ -1,7 +1,5 @@
 package controller;
 
-import static controller.AI.bestPosition;
-import static controller.AI.iteration;
 import controller.GameManager;
 import java.util.ArrayList;
 import model.Algorithm;
@@ -11,11 +9,12 @@ import view.Board;
 
 public class Minimax implements Algorithm {
 
-    public static int bestPosition = 0;
+    public int bestPosition = 0;
     
     @Override
-    public void runAlgorithm() {
-        findBestMoveMiniMax(GameManager.board, Player.O, 0);
+    public int runAlgorithm() {
+        findBestMoveMiniMax(Main.gameManager.board, Player.O, 0);
+        return bestPosition;
     }
 
     public int findBestMoveMiniMax(Board board, String player, int depth) {
@@ -31,9 +30,9 @@ public class Minimax implements Algorithm {
          * If X player win, return 1. If O player win,
          * return -1. If it's a draw, return 0.
          */
-        if (GameManager.checkCounterRow(Player.X)) {
+        if (Main.gameManager.board.checkCounterRow(Player.X)) {
             return 1;
-        } else if (GameManager.checkCounterRow(Player.O)) {
+        } else if (Main.gameManager.board.checkCounterRow(Player.O)) {
             return -1;
         } else if (availableCells.isEmpty()) {
             return 0;
@@ -47,7 +46,7 @@ public class Minimax implements Algorithm {
         for (int i = 0; i < availableCells.size(); ++i) {
             int position = availableCells.get(i).position;
             if (player.equalsIgnoreCase(Player.O)) {
-                GameManager.board.selectCell(position, Player.O);
+                Main.gameManager.board.selectCell(position, Player.O);
                 System.out.println("Place O in position: " + position + " depth = " + depth);
                 int currentScore = minimax(board, Player.X, depth+1);
                 min = Math.min(currentScore, min);
@@ -65,7 +64,7 @@ public class Minimax implements Algorithm {
                 }
                 
                 if (currentScore == -1) {
-                    GameManager.board.undoMove(position);
+                    Main.gameManager.board.undoMove(position);
                     break;
                 }
                 
@@ -80,19 +79,19 @@ public class Minimax implements Algorithm {
                     }
                  */
             } else {
-                GameManager.board.selectCell(position, Player.X);
+                Main.gameManager.board.selectCell(position, Player.X);
                 int currentScore = minimax(board, Player.O, depth+1);
                 max = Math.max(currentScore, max);
                 
                 if (max == 1) {
-                    GameManager.board.undoMove(position);
+                    Main.gameManager.board.undoMove(position);
                     break;
                 }
                 
             } // End if-else check player X or player O
             
             // Undo move
-            GameManager.board.undoMove(position);
+            Main.gameManager.board.undoMove(position);
             
         } // End for
         return player.equalsIgnoreCase(Player.X) ? max : min;

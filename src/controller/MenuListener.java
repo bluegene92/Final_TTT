@@ -1,98 +1,80 @@
-
 package controller;
+import model.AVAMode;
+import model.HVAMode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import model.GameState;
+import model.AVADeathMatchMode;
 import model.Player;
-import view.Menu;
-import view.UserInterface;
-
+import view.AVAMenu;
+import view.HVAMenu;
+import view.MainMenu;
+import static view.AVAMenu.deathMatchCheckBox;
 
 public class MenuListener implements ActionListener {
 
-    
+    char remoteBoardArr[] = new char[9];
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-        
         Object source = e.getSource();
-        
-        if (source == Menu.hvaButton) {
-            
-            
-            /**
-             * Change the display to HVA
-             */
-            System.out.println("Player Human vs AI");
-            GameManager.gameMode = GameState.HVA_MODE;
-            Main.userInterface.dispose();
-            Main.hva.displayHVA();
-            Main.hva.setVisible(true);
-            Main.gameManager.ui = Main.hva;
-            
-        } else if (source == Menu.avaButton) {
-            
-            
-            /**
-             * Change the display to AVA
-             */
+       
+        if (source == HVAMenu.mainMenuButton || source == AVAMenu.mainMenuButton) {
+            System.out.println("main  menu");
+            Main.gameWindow.displayMainMenu();
+        } else if (source == MainMenu.hvaButton) {
+            System.out.println("Clicked hva");
+            Main.gameWindow.displayHVAMenu();
+            Main.gameManager.setState(new HVAMode());
+            Main.gameManager.board = HVAMenu.hvaBoard;
+            HVAMenu.statusBar.setText("Click <Start Game> to begin");
+            System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
+        } else if (source == MainMenu.avaButton) {
+            System.out.println("Clicked ava");
+            Main.gameWindow.displayAVAMenu();
+            Main.gameManager.setState(new AVAMode());
+            Main.gameManager.board = AVAMenu.avaBoard;
+            System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
             System.out.println("Player AI vs AI");
-            GameManager.gameMode = GameState.AVA_MODE;
-            Main.userInterface.dispose();
-            Main.ava.displayAVA();
-            Main.ava.setVisible(true);
-            Main.gameManager.ui = Main.ava;
-            
-        } else if (source == Menu.startHVAGameButton) {
-            
-            
-            /**
-             * Start HVA game
-             */
+        } else if (source == HVAMenu.playAgainButton) {
+            Main.gameManager.board.resetBoard();
+            Main.gameManager.playerTurn = Player.X;
+            HVAMenu.startHVAGameButton.setEnabled(true);
+            HVAMenu.statusBar.setText("");
+            HVAMenu.timeCountDown.setText("10 seconds (default)");
+            Main.gameManager.timer.stop();
+        } else if (source == HVAMenu.startHVAGameButton) {   
+            HVAMenu.playAgainButton.setEnabled(false);
             System.out.println("start the game");
-            UserInterface.board.enable();
-            UserInterface.menu.startHVAGameButton.setEnabled(false);
-            UserInterface.statusBar.setText("User: X's turn");
-            if (UserInterface.menu.readThresholdTime.getText().isEmpty()) {
-                GameManager.setTimer(10);
-            } else {
-                GameManager.setTimer(Integer.parseInt(UserInterface.menu.readThresholdTime.getText()));
-            }
-            UserInterface.menu.readThresholdTime.setEditable(false);
-            
-            
-        } else if (source == Menu.startAVAGameButton) {
-            // To be determine
-            
-            
-            
-        } else if (source == Menu.playAgainButton) {
-            
-            
-            /**
-             * Play the game again.
-             */
-            System.out.println("play again");
-            if (GameManager.gameMode == GameState.HVA_MODE) {
-                Menu.startHVAGameButton.setEnabled(false);
-                UserInterface.statusBar.setText("User: X's turn");
-                if (UserInterface.menu.readThresholdTime.getText().isEmpty()) {
-                    GameManager.setTimer(10);
-                } else {
-                    GameManager.setTimer(Integer.parseInt(UserInterface.menu.readThresholdTime.getText()));
+            HVAMenu.hvaBoard.clearBoard();
+            HVAMenu.hvaBoard.enableBoard();
+            HVAMenu.statusBar.setText("");            
+            HVAMenu.readThresholdTime.setEditable(false);
+            if (!HVAMenu.readThresholdTime.getText().equalsIgnoreCase("")) {
+                if (Integer.parseInt(HVAMenu.readThresholdTime.getText()) != 0) {
+                    Main.gameManager.thresholdTime = Integer.parseInt(HVAMenu.readThresholdTime.getText());
                 }
-                UserInterface.menu.readThresholdTime.setEditable(false);
-            } else if (GameManager.gameMode == GameState.AVA_MODE) {
-                Menu.startAVAGameButton.setEnabled(false);
             }
-
-            Menu.playAgainButton.setEnabled(false);
-            GameManager.board.clearBoard();
-            GameManager.ui.statusBar.setText("Play again: X's turn");
-            GameManager.playerTurn = Player.X;
+            Main.gameManager.myState.doAction(Main.gameManager);
+            Main.gameManager.startTimer();
+        } else if (source == AVAMenu.makeMoveButton) { 
+            System.out.println("AI make a move");
+            // Start at AVAMode
+            Main.networkManager.getMethod(remoteBoardArr);
+            Main.networkManager.printBoardArr(remoteBoardArr);
+            Main.gameManager.myState.doAction(Main.gameManager);
             
-        } // End if
-        
+        } else if (source == deathMatchCheckBox) {
+            Main.gameManager.isDeathMatch = (Main.gameManager.isDeathMatch) ? false : true;
+            if (Main.gameManager.isDeathMatch) {
+                Main.gameManager.setState(new AVADeathMatchMode());
+                Main.gameManager.ai.algorithm = new DeathMatch();
+                System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
+            } else {
+                Main.gameManager.setState(new AVAMode());
+                Main.gameManager.ai.algorithm = new AlphaBetaPruning();
+                System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
+            }
+            System.out.println("Death match: " + Main.gameManager.isDeathMatch);
+        }
         
     } // End actionPerformed()
     

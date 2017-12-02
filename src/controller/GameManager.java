@@ -1,129 +1,119 @@
-
 package controller;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import model.HVAMode;
+import javax.swing.Timer;
+import model.GameModeState;
 import model.Player;
+import view.AVAMenu;
 import view.Board;
-import view.Menu;
-import view.UserInterface;
-
+import view.HVAMenu;
 
 public class GameManager {
-    
-
-    public static int gameMode;
-    public static Board board;
-    public static String result;
-    public static UserInterface ui;
-    public static int timeInSeconds;
-    public static int timeTick;
-    public static Timer timer;
-    
+    public int gameMode;
+    public Board board;
+    public String result;
+    public int thresholdTime = 10;
+    public int counter;
+    public Timer timer;
+    public boolean isDeathMatch = false;
+    public GameModeState myState;
     
     /**
      * X will always be the first player.
-     * 0 - X turn
-     * 1 - O turn
+     * 0 - X turn - AI
+     * 1 - O turn - Human
      */
-    public static String playerTurn = Player.X;
-    
-    
+    public String playerTurn = Player.X;
     public static AI ai;
 
 
     public GameManager() {
         ai = new AI();
+        myState = new HVAMode();
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                HVAMenu.timeCountDown.setText(counter + " secs");
+                if (counter == 0) {
+                    board.disableBoard();
+                    HVAMenu.readThresholdTime.setEditable(true);
+                    HVAMenu.timeCountDown.setText("Time's up!");
+                    HVAMenu.statusBar.setText("You Lose!!!");
+                    playerTurn = Player.X;
+                    timer.stop();
+                    counter = thresholdTime;
+                }
+                counter--;
+            }
+        });
+    }
+    
+    
+    public void placeAIMove() {
+        if (playerTurn.equalsIgnoreCase(Player.X)) {
+            ai.makeMove();
+            updatePlayerTurn();
+        }
+        checkForWinner();
+    }
+    
+    public void startTimer() {
+        counter = thresholdTime;
+        timer.start();
+    }
+    
+    public void updatePlayerTurn() {
+        playerTurn = (playerTurn.equalsIgnoreCase(Player.O)) ? Player.X : Player.O;
+    }
+    
+    public void setState(GameModeState gms) {
+        myState = gms;
+    }
+    
+    public GameModeState getState() {
+        return myState;
+    }
+    
+    public boolean isGameOver() {
+        return board.checkCounterRow(Player.X) 
+                || board.checkCounterRow(Player.O) 
+                || board.isBoardEmpty();
     }
 
-    
-    public static boolean isGameOver() {
-        board = UserInterface.board;
-        return checkCounterRow("X") || checkCounterRow("O") || board.isBoardEmpty();
+    public void gameEnd() {
+        board.disableBoard();
+        HVAMenu.startHVAGameButton.setEnabled(false);
+        HVAMenu.playAgainButton.setEnabled(true);
+        HVAMenu.readThresholdTime.setEditable(true);
     }
     
-    
-    /**
-     * Invoke when game is finish, which will
-     * disable the board, and enable the "play again"
-     * button back on.
-     */
-    public static void gameEnd() {
-        UserInterface.board.disable();
-        Menu.playAgainButton.setEnabled(true);
-        Menu.readThresholdTime.setEditable(true);
-        UserInterface.menu.timeCountDown.setText("0 seconds");
-        timer.cancel();
+
+    public void updateHVAStatusBar(String n) {
+        HVAMenu.statusBar.setText(n);
     }
     
-    
-    public static void setTimer(int time) {
-        timeTick = time;
-        timeInSeconds = time;
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                UserInterface.menu.timeCountDown.setText(timeTick + " seconds");
-                timeTick--;
-                if (timeTick < 0) {
-                    timer.cancel();
-                    gameEnd();
-                    UserInterface.statusBar.setText("Out of time, you LOST!!!");
-                }
-            }
-        }, 0, 1000);
+    public void updateAVAStatusBar(String n) {
+        AVAMenu.statusBar.setText(n);
     }
     
-    
-    /**
-     * Check if the player won the game. If the player
-     * win, return true, otherwise return false.
-     * 
-     * @param player The player to be evaluated.
-     * @return boolean Return true if the player win.
-     */
-    public static boolean checkCounterRow(String player) {
-        if (board.checkWinCondition(0, 1, 2) && // Top row
-            board.cells[0].getText().equalsIgnoreCase(player)) {
-            return true;
-        } else if (board.checkWinCondition(3, 4, 5) && // Middle row
-                   board.cells[3].getText().equalsIgnoreCase(player)) {
-            return true;
-        } else if (board.checkWinCondition(6, 7, 8) && // Bottom row
-                   board.cells[6].getText().equalsIgnoreCase(player)) {
-            return true;
-        } else if (board.checkWinCondition(0, 3, 6) && // Left column
-                   board.cells[0].getText().equalsIgnoreCase(player)) {
-            return true;
-        } else if ((board.checkWinCondition(1, 4, 7) && // Middle column
-                board.cells[1].getText().equalsIgnoreCase(player))) {
-            return true;
-        } else if ((board.checkWinCondition(2, 5, 8) && // Right column 
-                board.cells[2].getText().equalsIgnoreCase(player))) {
-            return true;
-        } else if ((board.checkWinCondition(0, 4, 8) && // Backward diagonal
-                board.cells[0].getText().equalsIgnoreCase(player))) {
-            return true;
-        } else if ((board.checkWinCondition(2, 4, 6) && // Forward diagonal 
-                board.cells[2].getText().equalsIgnoreCase(player))) {
-            return true;
-        }
-        return false;
-    } // End checkWinner()
-    
-    
-    public static void checkForWinner() {
-        if (checkCounterRow(Player.X)) {
+    public void checkForWinner() {
+        System.out.println("Check for winner");
+        if (board.checkCounterRow(Player.X)) {
             System.out.println("X win");
+            updateHVAStatusBar("X WIN!!!");
+            timer.stop();
             gameEnd();
-            ui.statusBar.setText("X Win!!!");
-        } else if (checkCounterRow(Player.O)) {
+        } else if (board.checkCounterRow(Player.O)) {
             System.out.println("O win");
+            updateHVAStatusBar("O WIN!!!");
+            timer.stop();
             gameEnd();
-            ui.statusBar.setText("O Win!!!");
         } else if (board.isBoardEmpty()){
             System.out.println("DRAW");
+            updateHVAStatusBar("DRAW!!!");
+            timer.stop();
             gameEnd();
-            ui.statusBar.setText("Draw!!!");
         }
     }
     

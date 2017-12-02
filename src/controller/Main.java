@@ -6,39 +6,30 @@
  * separate systems compete over a server network.
  * 
  * @author Team 8 XOXO
- * @version 1.2
+ * @version 1.4
  * @since 2017-10-20
  */
 package controller;
-import view.UserInterface;
-
+import view.GameWindow;
 
 public class Main {
-    
-
     public static GameManager gameManager;
-    public static UserInterface userInterface;
-    public static UserInterface hva;
-    public static UserInterface ava;
-    
+    public static NetworkManager networkManager;
+    public static GameWindow gameWindow;
     
     public static void main(String[] args) {
-
-        
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 gameManager = new GameManager();
-                userInterface = new UserInterface();
-                userInterface.initialize();
-                userInterface.setVisible(true);
-                hva = new UserInterface();
-                ava = new UserInterface();
-                
+                networkManager = new NetworkManager();
+                gameWindow = new GameWindow();
+                gameWindow.displayMainMenu();
             } // End run()
+            
         }); // End invokeLater()
+        
     } // End main();
-    
     
 } // End class Main

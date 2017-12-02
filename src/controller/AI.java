@@ -1,17 +1,13 @@
 package controller;
-
-import controller.GameManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import model.Algorithm;
 import model.Player;
 
+
 public class AI {
-    
-    private Thread thread;
-    private String threadName;
-    private Algorithm algorithm = new AlphaBetaPruning();
+    public Algorithm algorithm = new AlphaBetaPruning();
     public static double maxPly;
     public static int bestPosition;
     public static int iteration = 0; // For testing purpose
@@ -21,31 +17,46 @@ public class AI {
     boolean thinking = true;
     int bestMove;
     public Timer time;
+    public int pauseTime = 3000; // 3 seconds
     
     public AI() {}
     
-    public void pause() {
-        time = new Timer(3000, taskPerform);
+    public void pause(int pauseTime) {
+        time = new Timer(pauseTime, taskPerform);
         time.start();
+        Main.gameManager.timer.stop();
+        Main.gameManager.counter = Main.gameManager.thresholdTime;
     }
 
     ActionListener taskPerform = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ae) {
-            GameManager.board.selectCell(bestMove, Player.O);
+            Main.gameManager.board.selectCell(bestMove, Player.X);
+            Main.gameManager.checkForWinner();
+            Main.gameManager.gameEnd();
             time.stop();
+            Main.gameManager.timer.start();
+            Main.gameManager.board.enableBoard();
+            
         }
     };
      
     public void makeMove() {
-        if (!GameManager.isGameOver()) {
-            GameManager.ui.statusBar.setText("O's turn");
-            algorithm.runAlgorithm();
-            bestMove = AlphaBetaPruning.bestPosition;
-            pause(); // Pause for 3 seconds
-            GameManager.ui.statusBar.setText("X's turn");
-            GameManager.playerTurn = Player.X;  
+        if (!Main.gameManager.isGameOver()) {
+            /**
+             * Calculate the time the algorithm run.
+             * Subtract it from 3 seconds to find pause time.
+             */
+            long startTime = System.currentTimeMillis();
+            bestMove = algorithm.runAlgorithm();
+            long endTime = System.currentTimeMillis();
+            int diff = (int) endTime - (int) startTime;
+            if (diff < 3000) {
+                pauseTime = 3000 - diff;
+            }
+            
+            pause(pauseTime);
+            System.out.println("Ran algorithm, best move is: " + bestMove);
         }
-        //algorithm.runAlgorithm();
     }
 } // End AI

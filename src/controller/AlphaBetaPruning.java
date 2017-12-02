@@ -1,7 +1,5 @@
 package controller;
-
 import java.util.ArrayList;
-
 import model.Algorithm;
 import model.Cell;
 import model.Player;
@@ -9,12 +7,19 @@ import view.Board;
 
 public class AlphaBetaPruning implements Algorithm {
     
-    public static int bestPosition = 0;
-    public int tick = 0;
+    private int bestPosition = 0;
+    
+    Board board = new Board();
+    
+    public AlphaBetaPruning() {
+        board.create();
+    }
     
     @Override
-    public void runAlgorithm() {
-        findBestMoveAlphaBeta(GameManager.board, Player.O, 0);
+    public int runAlgorithm() {
+        // Feed the counter that is running the algorithm
+        findBestMoveAlphaBeta(Main.gameManager.board, Player.X, 0);
+        return bestPosition;
     }
     
     public void findBestMoveAlphaBeta(Board board, String player, int depth) {
@@ -22,12 +27,11 @@ public class AlphaBetaPruning implements Algorithm {
     }
     
     public int alphaBetaPruning(Board board, String player, int depth, int alpha, int beta) {
-//        iteration++;
         ArrayList<Cell> availableCells = board.getAvailableCells();
 
-        if (GameManager.checkCounterRow(Player.X)) {
+        if (Main.gameManager.board.checkCounterRow(Player.X)) {
             return 10;
-        } else if (GameManager.checkCounterRow(Player.O)) {
+        } else if (Main.gameManager.board.checkCounterRow(Player.O)) {
             return -10;
         } else if (availableCells.isEmpty()) {
             return 0;
@@ -37,13 +41,11 @@ public class AlphaBetaPruning implements Algorithm {
          * If the player is player X
          */
         if (player.equalsIgnoreCase(Player.X)) {
-            
             for (int i = 0; i < availableCells.size(); i++) {
-//                iteration++;
                 int position = availableCells.get(i).position;
-                GameManager.board.selectCell(position, Player.X);
+                Main.gameManager.board.selectCell(position, Player.X);
                 int score = alphaBetaPruning(board, Player.O, depth+1, alpha, beta);
-                GameManager.board.undoMove(position);
+                Main.gameManager.board.undoMove(position);
                 
                 if (score > alpha) {
                     alpha = score;
@@ -61,11 +63,10 @@ public class AlphaBetaPruning implements Algorithm {
              * If the player is O
              */
             for (int i = 0; i < availableCells.size(); i++) {
-//                iteration++;
                 int position = availableCells.get(i).position;
-                GameManager.board.selectCell(position, Player.O);
+                Main.gameManager.board.selectCell(position, Player.O);
                 int score = alphaBetaPruning(board, Player.X, depth+1, alpha, beta);
-                GameManager.board.undoMove(position);
+                Main.gameManager.board.undoMove(position);
                 
                 if (score < beta) {
                     beta = score;

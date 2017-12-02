@@ -8,5 +8,5 @@ package model;
 
 
 public interface Algorithm {
-    void runAlgorithm();
+    int runAlgorithm();
 }

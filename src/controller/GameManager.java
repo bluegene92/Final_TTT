@@ -10,7 +10,6 @@ import view.Board;
 import view.HVAMenu;
 
 public class GameManager {
-    public int gameMode;
     public Board board;
     public String result;
     public int thresholdTime = 10;

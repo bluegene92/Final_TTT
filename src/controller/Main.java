@@ -18,6 +18,8 @@ public class Main {
     public static GameWindow gameWindow;
     
     public static void main(String[] args) {
+        HTTPRequest.setMyID("Team 8");
+        
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
 
             @Override

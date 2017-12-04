@@ -54,7 +54,7 @@ public class AVAMenu extends Menu {
         serverStatus = new JTextField();
         serverStatus.setEditable(false);
         serverStatus.setFont(new Font("Courier New", Font.BOLD, 15));
-        serverStatus.setText("Server Status: retrieve data first...");
+        serverStatus.setText("Server status: ");
         serverStatus.setBorder(BorderFactory.createEmptyBorder());
         severStatusPanel.add(serverStatus);
         rightArea.add(severStatusPanel);
@@ -62,11 +62,11 @@ public class AVAMenu extends Menu {
         readServerURL = new JTextField("http://dotpizza.azurewebsites.net/api/tictactoe");
         readServerURL.setPreferredSize(new Dimension(350, 30));
         
-        inputPanel = new JPanel();
-        inputPanel.setLayout(new FlowLayout());
-        inputPanel.setBorder(BorderFactory.createTitledBorder("Enter Server URL"));
-        inputPanel.add(readServerURL);
-        rightArea.add(inputPanel);
+//        inputPanel = new JPanel();
+//        inputPanel.setLayout(new FlowLayout());
+//        inputPanel.setBorder(BorderFactory.createTitledBorder("Enter Server URL"));
+//        inputPanel.add(readServerURL);
+//        rightArea.add(inputPanel);
 
         makeMovePanel = new JPanel();
         makeMovePanel.setLayout(new GridLayout(1, 2));

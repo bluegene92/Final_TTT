@@ -8,17 +8,19 @@ import view.Board;
 public class AlphaBetaPruning implements Algorithm {
     
     private int bestPosition = 0;
-    
-    Board board = new Board();
-    
     public AlphaBetaPruning() {
-        board.create();
     }
     
     @Override
     public int runAlgorithm() {
         // Feed the counter that is running the algorithm
-        findBestMoveAlphaBeta(Main.gameManager.board, Player.X, 0);
+        
+        /**
+         * Make sure to place the counter that the team is player for.
+         * X - for first player
+         * O - for second player
+         */
+        findBestMoveAlphaBeta(Main.gameManager.board, Player.O, 0);
         return bestPosition;
     }
     

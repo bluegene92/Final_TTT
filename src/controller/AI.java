@@ -15,7 +15,7 @@ public class AI {
     public int positiveInfinity = Integer.MAX_VALUE;
     int tick = 0;
     boolean thinking = true;
-    int bestMove;
+    public int bestMove;
     public Timer time;
     public int pauseTime = 3000; // 3 seconds
     
@@ -40,7 +40,25 @@ public class AI {
             
         }
     };
-     
+
+    public void makeAVAMove() {
+        if (!Main.gameManager.isGameOver()) {
+            /**
+             * Calculate the time the algorithm run.
+             * Subtract it from 3 seconds to find pause time.
+             */
+            long startTime = System.currentTimeMillis();
+            bestMove = algorithm.runAlgorithm();
+            long endTime = System.currentTimeMillis();
+            int diff = (int) endTime - (int) startTime;
+            if (diff < 3000) {
+                pauseTime = 3000 - diff;
+            }
+            System.out.println("Ran algorithm, AVA best move is: " + bestMove);
+        }        
+    }
+    
+    
     public void makeMove() {
         if (!Main.gameManager.isGameOver()) {
             /**

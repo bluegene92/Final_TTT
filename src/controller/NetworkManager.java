@@ -1,117 +1,95 @@
 package controller;
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.TicTacToeData;
+import org.json.JSONException;
+import org.json.JSONObject;
 import view.AVAMenu;
 
 public class NetworkManager {
-    private static int turnNumber = 1;
+    private HTTPRequest httprequest;
+    private GameBoard gameBoard;
+    private TicTacToeData tictactoeData;
+    private GameStatus gameStatus;
+    private GameStatistic gameStatistic;
+    private GameClientID gameClientID;
     
-    public void getMethod(char[] arr){
-          try {
-//                String urlString = "http://tictactoetestserver.azurewebsites.net/api/tictactoe";
-                String urlString = AVAMenu.readServerURL.getText();
-                System.out.println(urlString);
-		URL url = new URL(urlString);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-		conn.setRequestProperty("Accept", "text/xml");
-
-		if (conn.getResponseCode() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-					+ conn.getResponseCode());
-		}
-                parseXML(arr, conn);   
-		conn.disconnect();
-	  } catch (MalformedURLException e) {
-		e.printStackTrace();
-	  } catch (IOException e) {
-		e.printStackTrace();
-	  } 
+    public JSONObject jsonObject;
+    private String stringFromUrl;
+    public NetworkManager() {
+        httprequest = new HTTPRequest();
+        gameBoard = new GameBoard();
+        tictactoeData = new TicTacToeData();
+        gameStatus = new GameStatus();
+        gameStatistic = new GameStatistic();
+        gameClientID = new GameClientID();
     }
     
-    public void putMethod(int pos){
+    public void requestData() {
         try {
-//            String urlString = "http://tictactoetestserver.azurewebsites.net/api/tictactoe/";
-            String urlString = AVAMenu.readServerURL.getText();
-            System.out.println(urlString);
-            urlString += pos;
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod("PUT");
-            conn.setRequestProperty("Content-Type", "text/xml");
-            String input = "<TicTacToeViewModel xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.datacontract.org/2004/07/TicTacToe_Server.Models\"><Token>@</Token></TicTacToeViewModel>";
-            input = input.replace(input.charAt(input.indexOf("@")), selectToken());
-            OutputStream os = conn.getOutputStream();
-            os.write(input.getBytes());
-            os.flush();
-            
-            if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-            } else {
-                turnNumber++;
-            }
-            conn.disconnect();
-	  } catch (MalformedURLException e) {
-		e.printStackTrace();
-	  } catch (IOException e) {
-		e.printStackTrace();
-	 }
+            stringFromUrl = httprequest.readJsonFromUrl("http://dotpizza.azurewebsites.net/api/tictactoe/");
+        } catch (IOException ex) {
+            Logger.getLogger(NetworkManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(NetworkManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            jsonObject = new JSONObject(stringFromUrl);
+        } catch (JSONException ex) {
+            Logger.getLogger(NetworkManager.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+        getBoard();
+        getStatistic();
+        getStatus();
+        getClientID();
+        tictactoeData.getInfo();
     }
-        
-        private void parseXML(char[] arr, HttpURLConnection conn) throws IOException {
-            try {
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-            InputSource input = new InputSource();
-            input.setCharacterStream(new StringReader(br.readLine()));
-                try {
-                    Document xmlDocument = documentBuilder.parse(input);
-                    //System.out.println(xmlDocument.getDocumentElement().getTextContent());
-                    int spotCount = 0;
-                    while (spotCount < arr.length) {
-                        int spotCheck = 0;
-                        while (spotCount != Character.getNumericValue(xmlDocument.getDocumentElement().getTextContent().charAt(spotCheck/2))) {
-                            spotCheck+=2;    
-                        }
-                            arr[spotCount] = xmlDocument.getDocumentElement().getTextContent().charAt(spotCheck/2+1);
-                            spotCount++;
-                    }
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
+    
+    public void sendMove(int n) {
+        httprequest.put(n);
+    }
+    
+    public void getBoard() {
+        gameBoard.get(jsonObject);
+        tictactoeData.gameBoard = gameBoard.gameBoardArray;
+        for (int i = 0; i < 9; ++i) {
+            
+            String value = String.valueOf(tictactoeData.gameBoard[i]);
+            if (value.equalsIgnoreCase("-")) {
+                AVAMenu.avaBoard.boardModel.cells[i].setText("");
+            } else {
+                AVAMenu.avaBoard.boardModel.cells[i].setText(
+                        String.valueOf(tictactoeData.gameBoard[i]));
             }
         }
-        
-        public void printBoardArr(char[] arr) {
-            for (int i = 0; i < arr.length; ++i) {
-                System.out.println(arr[i]);
-            }
+        Main.gameManager.board = AVAMenu.avaBoard;
+    }
+    
+    public void getStatistic() {
+        tictactoeData.gameTurn = Integer.parseInt(gameStatistic.get(jsonObject));
+    }
+    
+    public void getStatus() {
+        String statusInfo = gameStatus.get(jsonObject);
+        int index = statusInfo.indexOf('@');
+        String gameModeString = statusInfo.substring(0, index);
+        String winnerString = statusInfo.substring(index + 1, statusInfo.length());
+        if (gameModeString.equalsIgnoreCase("false")) {
+            tictactoeData.gameMode = false;
+            AVAMenu.deathMatchCheckBox.setSelected(false);
+            Main.gameManager.ai.algorithm = new AlphaBetaPruning(); 
+        } else if (gameModeString.equalsIgnoreCase("true")) {
+            Main.gameManager.ai.algorithm = new DeathMatch();
+            tictactoeData.gameMode = true;
+            AVAMenu.deathMatchCheckBox.setSelected(true);
         }
-        
-        private char selectToken() {
-            if (turnNumber % 2 == 1)
-                return 'X';
-            else
-                return 'O';
-        }
+        tictactoeData.gameWinner = winnerString;
+    }
+    
+    public void getClientID() {
+        tictactoeData.clientID = gameClientID.get(jsonObject);
+    }
 }

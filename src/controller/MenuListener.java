@@ -3,8 +3,12 @@ import model.AVAMode;
 import model.HVAMode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.AVADeathMatchMode;
 import model.Player;
+import org.json.JSONException;
 import view.AVAMenu;
 import view.HVAMenu;
 import view.MainMenu;
@@ -32,6 +36,7 @@ public class MenuListener implements ActionListener {
             Main.gameWindow.displayAVAMenu();
             Main.gameManager.setState(new AVAMode());
             Main.gameManager.board = AVAMenu.avaBoard;
+            Main.networkManager.requestData();
             System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
             System.out.println("Player AI vs AI");
         } else if (source == HVAMenu.playAgainButton) {
@@ -56,10 +61,14 @@ public class MenuListener implements ActionListener {
             Main.gameManager.myState.doAction(Main.gameManager);
             Main.gameManager.startTimer();
         } else if (source == AVAMenu.makeMoveButton) { 
-            System.out.println("AI make a move");
+//            System.out.println("AI make a move");
+//            Main.networkManager.requestData();
+//            int bestMove = 99;
+//            Main.networkManager.sendMove(bestMove);
+//            Main.networkManager.requestData();
+            
             // Start at AVAMode
-            Main.networkManager.getMethod(remoteBoardArr);
-            Main.networkManager.printBoardArr(remoteBoardArr);
+
             Main.gameManager.myState.doAction(Main.gameManager);
             
         } else if (source == deathMatchCheckBox) {

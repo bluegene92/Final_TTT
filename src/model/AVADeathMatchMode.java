@@ -9,6 +9,7 @@ public class AVADeathMatchMode implements GameModeState {
         Main.networkManager.requestData();
         gm.ai.makeDeathMatchMove();
         int bestCounter = Main.gameManager.ai.bestCounter;
+        System.out.println("best move/counter: " + bestCounter);
         Main.networkManager.sendMove(bestCounter);
         Main.gameManager.board.disableBoard();
         Main.networkManager.requestData();

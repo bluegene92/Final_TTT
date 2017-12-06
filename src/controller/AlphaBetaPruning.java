@@ -6,14 +6,13 @@ import model.Player;
 import view.Board;
 
 public class AlphaBetaPruning implements Algorithm {
-    
     private int bestPosition = 0;
     public AlphaBetaPruning() {
     }
     
     @Override
     public int runAlgorithm() {
-        findBestMoveAlphaBeta(Main.gameManager.board, Main.gameManager.mainPlayer, 0);
+        findBestMoveAlphaBeta(Main.gameManager.board, GameManager.mainPlayer, 0);
         return bestPosition;
     }
     

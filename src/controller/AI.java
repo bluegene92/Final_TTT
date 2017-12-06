@@ -35,26 +35,50 @@ public class AI {
         }
     };
     
+    public int checkCorner() {
+        int countNonEmpty = Main.gameManager.board.boardCount();
+        System.out.println("non empty counter: " + countNonEmpty);
+        if (!Main.gameManager.board.boardModel.cells[0].isEmpty() 
+            || !Main.gameManager.board.boardModel.cells[2].isEmpty()
+            || !Main.gameManager.board.boardModel.cells[6].isEmpty()
+            || !Main.gameManager.board.boardModel.cells[8].isEmpty()) {
+            
+            if (!Main.gameManager.board.boardModel.cells[0].isEmpty()) {
+                return 7;
+            } else if (!Main.gameManager.board.boardModel.cells[2].isEmpty()) {
+                return 3;
+            } else if (!Main.gameManager.board.boardModel.cells[6].isEmpty()) {
+                return 5;
+            } else  {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
     
     public void makeDeathMatchMove() {
         if (Main.gameManager.board.isEmpty()) {
             System.out.println("running " + algorithm.toString());
-            Main.gameManager.board.selectCell(4, Main.gameManager.mainPlayer);
-        } else if (Main.gameManager.isDeathMatch()) {
+            bestCounter = 4;
+//            Main.gameManager.board.selectCell(4, Main.gameManager.mainPlayer);
+        } else if (Main.gameManager.board.boardCount() == 2) {
+            bestCounter = checkCorner();
+        } 
+        else if (Main.gameManager.isDeathMatch()) {
             System.out.println("running death match");
             algorithm = new DeathMatchAlgorithm();
             bestCounter = algorithm.runAlgorithm();
             System.out.println("running " + algorithm.toString());
             System.out.println("best Counter" + bestCounter);
 //            Main.gameManager.board.slideCell(bestCounter, Main.gameManager.mainPlayer);
-            Main.gameManager.checkForWinner();
-            
+//            Main.gameManager.checkForWinner();
         } else  {
             algorithm = new AlphaBetaPruning();
-            bestMove = algorithm.runAlgorithm();
+            bestCounter = algorithm.runAlgorithm();
             System.out.println("run alphabeta");
             System.out.println("running " + algorithm.toString());
-            Main.gameManager.board.selectCell(bestMove, Main.gameManager.mainPlayer);
+//            Main.gameManager.board.selectCell(bestMove, Main.gameManager.mainPlayer);
         }
     }
 
@@ -71,7 +95,7 @@ public class AI {
             if (diff < 3000) {
                 pauseTime = 3000 - diff;
             }
-            pause(pauseTime);
+//            pause(pauseTime);
         }        
     }
     

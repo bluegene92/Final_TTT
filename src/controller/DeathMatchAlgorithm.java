@@ -1,5 +1,5 @@
-
-
+package controller;
+import controller.GameManager;
 import controller.Main;
 import java.util.ArrayList;
 import model.Algorithm;
@@ -13,7 +13,7 @@ public class DeathMatchAlgorithm implements Algorithm {
     
     @Override
     public int runAlgorithm() {
-        findBestMoveDeathMatch(Main.gameManager.board, Main.gameManager.mainPlayer, 0);
+        findBestMoveDeathMatch(Main.gameManager.board, GameManager.mainPlayer, 0);
         return bestCounter;
     }
     
@@ -31,6 +31,9 @@ public class DeathMatchAlgorithm implements Algorithm {
         
         if (player.equalsIgnoreCase(Player.X)) {
             for (int i = 0; i < adjacentList.size(); i++) {
+                if (adjacentList.size() > 1 && adjacentList.get(i).position == 4) {
+                    continue;
+                }
                 int oldPosition = adjacentList.get(i).position;
                 int newPosition = Main.gameManager.board.slideCell(oldPosition, Player.X);
                 System.out.println("Old: " + oldPosition);
@@ -54,6 +57,9 @@ public class DeathMatchAlgorithm implements Algorithm {
             return alpha;
         } else { 
             for (int i = 0; i < adjacentList.size(); i++) {
+                if (adjacentList.size() > 1 && adjacentList.get(i).position == 4) {
+                    continue;
+                }
                 int oldPosition = adjacentList.get(i).position;
                 int newPosition = Main.gameManager.board.slideCell(oldPosition, Player.X);
                 System.out.println("Old: " + oldPosition);

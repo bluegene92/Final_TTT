@@ -21,18 +21,18 @@ public class Board extends JPanel {
             boardModel.cells[i].addActionListener(cellListener);
             boardModel.cells[i].setFocusable(false);
         } 
-        
-//        boardModel.cells[0].setText(Player.O);
-//        boardModel.cells[1].setText(Player.X);
-//        boardModel.cells[2].setText(Player.X);
-//        boardModel.cells[3].setText(Player.O);
-//        boardModel.cells[4].setText(Player.X);
-//        boardModel.cells[5].setText(Player.O);
-//        boardModel.cells[6].setText(Player.O);
-//        boardModel.cells[7].setText(Player.O);
-//        boardModel.cells[8].setText(Player.X);
     }
-
+    
+    public int boardCount() {
+        int n = 0;
+        for (int i = 0; i < 9; ++i) {
+            if (!boardModel.cells[i].isEmpty()) {
+                n++;
+            }
+        }
+        return n;
+    }
+    
     public void selectCell(int position, String player) {
         boardModel.cells[position].setText(player);
 //        boardModel.cells[position].setEnabled(false);

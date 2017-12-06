@@ -82,7 +82,7 @@ public class NetworkManager {
 //            AVAMenu.deathMatchCheckBox.setSelected(false);
             Main.gameManager.ai.algorithm = new AlphaBetaPruning(); 
         } else if (gameModeString.equalsIgnoreCase("true")) {
-            Main.gameManager.ai.algorithm = new DeathMatchAlgorithm();
+//            Main.gameManager.ai.algorithm = new DeathMatchAlgorithm();
             tictactoeData.gameMode = true;
 //            AVAMenu.deathMatchCheckBox.setSelected(true);
         }

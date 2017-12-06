@@ -20,7 +20,7 @@ public class GameManager {
     
 
     public String playerTurn = Player.X;
-    public String mainPlayer = Player.X;
+    public static String mainPlayer = Player.X;
     public static AI ai;
 
     public GameManager() {

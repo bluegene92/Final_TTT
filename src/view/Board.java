@@ -6,11 +6,11 @@ import javax.swing.JPanel;
 import model.BoardModel;
 import model.Cell;
 
-
 public class Board extends JPanel {
     private final int CELLS_COUNT = 9;
     public BoardModel boardModel = new BoardModel();
     private CellListener cellListener = new CellListener();
+    public static int counterOnBoard = 0;
     
     public void create() {
         setLayout(new GridLayout(3, 3));
@@ -19,21 +19,59 @@ public class Board extends JPanel {
             boardModel.cells[i].position = i;
             add(boardModel.cells[i]);
             boardModel.cells[i].addActionListener(cellListener);
+            boardModel.cells[i].setFocusable(false);
         } 
+        
+//        boardModel.cells[0].setText(Player.O);
+//        boardModel.cells[1].setText(Player.X);
+//        boardModel.cells[2].setText(Player.X);
+//        boardModel.cells[3].setText(Player.O);
+//        boardModel.cells[4].setText(Player.X);
+//        boardModel.cells[5].setText(Player.O);
+//        boardModel.cells[6].setText(Player.O);
+//        boardModel.cells[7].setText(Player.O);
+//        boardModel.cells[8].setText(Player.X);
     }
 
     public void selectCell(int position, String player) {
         boardModel.cells[position].setText(player);
-        boardModel.cells[position].setEnabled(false);
+//        boardModel.cells[position].setEnabled(false);
     }
-
-    public void slideCell(int currentPosition, int availablePosition, String player) {
-        
-        /** 
-        * ********* TBD ****************
-        * Do something for slide cell
-        */
-        
+    
+    public int slideCell(int position, String player) {
+        int currentEmptySlot = getEmptySlot();
+        System.out.println("slide counter: " + position + " to "+ currentEmptySlot);
+        boardModel.cells[currentEmptySlot].setText(player);
+        undoMove(position);
+        return currentEmptySlot;
+    }
+    
+    public boolean isEmpty() {
+        for (int i = 0; i < 9; ++i) {
+            if (!boardModel.cells[i].isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public int getCounterOnBoard() {
+        int n = 0;
+        for (int i = 0; i < 9; ++i) {
+            if (!boardModel.cells[i].isEmpty()) {
+                n++;
+            }
+        }
+        return n;
+    }
+    
+    public int getEmptySlot() {
+        for (int i = 0; i < 9; ++i) {
+            if (boardModel.cells[i].getText().equalsIgnoreCase("")) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void undoMove(int position) {
@@ -66,11 +104,25 @@ public class Board extends JPanel {
         enableBoard();
     }
     
-    public Board CopyBoard(Board b) {
-        for (int i = 0; i < CELLS_COUNT; ++i) {
-            b.boardModel.cells[i] = boardModel.cells[i];
-        }
-        return this;
+    public void removeCounter(int position) {
+        boardModel.cells[position].setText("");
+    }
+    
+    public ArrayList<Cell> getAdjacentList(String player) {
+        ArrayList<Cell> adjacentList = new ArrayList<Cell>();
+        int emptySlot = getEmptySlot();
+        for (int i = 0; i < 9; ++i) {
+            if (boardModel.cells[i].getText().equalsIgnoreCase(player) && 
+                isAdjacent(emptySlot, boardModel.cells[i].position)) {
+                
+                System.out.println("Adding " + boardModel.cells[i].position + " to adjacent list");
+                adjacentList.add(boardModel.cells[i]);
+                System.out.print("player " + player + " position " + boardModel.cells[i].position);
+                System.out.println(" adjacent to empty slot" + emptySlot);
+            } 
+
+        }        
+        return adjacentList;        
     }
     
     public void resetBoard() {
@@ -136,5 +188,64 @@ public class Board extends JPanel {
         return availableCells;
     }
     
-
+    public boolean isAdjacent(int position1, int position2) {
+        switch (position1) {
+            case 0:
+                if (position2 == 1 || position2 == 3 || position2 == 4) {
+                    return true;
+                }
+            break;
+            
+            case 1:
+                if (position2 == 0 || position2 == 2 || position2 == 4) {
+                    return true;
+                }
+            break;
+            
+            case 2:
+                if (position2 == 1 || position2 == 4 || position2 == 5) {
+                    return true;
+                }
+            break;
+            
+            case 3:
+                if (position2 ==  0 || position2 == 4 || position2 == 6) {
+                    return true;
+                }
+            break;
+            
+            case 4:
+                if (position2 == 0 || position2 == 1 || position2 == 2
+                        || position2 == 3 || position2 == 5 || position2 == 6 
+                        || position2 == 7
+                        || position2 == 8)
+                    return true;
+            break;
+            
+            case 5:
+                if (position2 == 2 || position2 == 4 || position2 == 8) {
+                    return true;
+                }
+            break;
+            
+            case 6:
+                if (position2 == 3 || position2 == 4 || position2 == 7) {
+                    return true;
+                }
+            break;
+            
+            case 7:
+                if (position2 == 6 || position2 == 4 || position2 == 8) {
+                    return true;
+                }
+            break;
+            
+            case 8:
+                if (position2 == 4 || position2 == 7 || position2 == 5) {
+                    return true;
+                }
+            break;
+        } 
+        return false;
+    }
 } // End class Board

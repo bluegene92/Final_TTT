@@ -20,9 +20,11 @@ public class AVAMenu extends Menu {
     public static JButton makeMoveButton;
     public static JButton playAgainButton;
     public static JButton mainMenuButton;
+    public static JButton resetBoardButton;
     public static JTextField serverStatus;
     public static JTextField readServerURL;
     public static JCheckBox deathMatchCheckBox;
+    public static JCheckBox playerTwoCheckBox;
     private MenuListener menuListener;
     private JPanel body;
     private JPanel rightArea;
@@ -31,6 +33,7 @@ public class AVAMenu extends Menu {
     private JPanel makeMovePanel;
     private JPanel makeMovePanelLeftSide;
     private JPanel makeMovePanelRightSide;
+    private JPanel resetBoardPanel;
     private JPanel playAgainPanel;
     private JPanel mainPanel;
     
@@ -49,15 +52,15 @@ public class AVAMenu extends Menu {
         rightArea = new JPanel();
         rightArea.setLayout(new GridLayout(6, 1));
 
-        severStatusPanel = new JPanel();
-        severStatusPanel.setLayout(new FlowLayout());
-        serverStatus = new JTextField();
-        serverStatus.setEditable(false);
-        serverStatus.setFont(new Font("Courier New", Font.BOLD, 15));
-        serverStatus.setText("Server status: ");
-        serverStatus.setBorder(BorderFactory.createEmptyBorder());
-        severStatusPanel.add(serverStatus);
-        rightArea.add(severStatusPanel);
+//        severStatusPanel = new JPanel();
+//        severStatusPanel.setLayout(new FlowLayout());
+//        serverStatus = new JTextField();
+//        serverStatus.setEditable(false);
+//        serverStatus.setFont(new Font("Courier New", Font.BOLD, 15));
+//        serverStatus.setText("Server status: ");
+//        serverStatus.setBorder(BorderFactory.createEmptyBorder());
+//        severStatusPanel.add(serverStatus);
+//        rightArea.add(severStatusPanel);
         
         readServerURL = new JTextField("http://dotpizza.azurewebsites.net/api/tictactoe");
         readServerURL.setPreferredSize(new Dimension(350, 30));
@@ -69,7 +72,7 @@ public class AVAMenu extends Menu {
 //        rightArea.add(inputPanel);
 
         makeMovePanel = new JPanel();
-        makeMovePanel.setLayout(new GridLayout(1, 2));
+        makeMovePanel.setLayout(new GridLayout(1, 3));
         makeMovePanelLeftSide = new JPanel();
         makeMovePanelLeftSide.setLayout(new FlowLayout());
         makeMovePanelRightSide = new JPanel();
@@ -77,14 +80,25 @@ public class AVAMenu extends Menu {
         makeMoveButton = new JButton("Make Move");
         makeMoveButton.setPreferredSize(new Dimension(100, 30));
         makeMoveButton.addActionListener(menuListener);
+        resetBoardPanel = new JPanel();
+        resetBoardPanel.setLayout(new FlowLayout());
+        resetBoardButton = new JButton("Reset Board");
+        resetBoardButton.setPreferredSize(new Dimension(150, 30));
+        resetBoardButton.addActionListener(menuListener);
         deathMatchCheckBox = new JCheckBox("Death match");
         deathMatchCheckBox.addActionListener(menuListener);
         deathMatchCheckBox.setMnemonic(KeyEvent.VK_D);
+        playerTwoCheckBox = new JCheckBox("Player 2");
+        playerTwoCheckBox.addActionListener(menuListener);
+        playerTwoCheckBox.setMnemonic(KeyEvent.VK_O);
         makeMovePanelLeftSide.add(makeMoveButton);
         makeMovePanelRightSide.add(deathMatchCheckBox);
+        makeMovePanelRightSide.add(playerTwoCheckBox);
         makeMovePanel.add(makeMovePanelLeftSide);
         makeMovePanel.add(makeMovePanelRightSide);
+        resetBoardPanel.add(resetBoardButton);
         rightArea.add(makeMovePanel);
+        rightArea.add(resetBoardPanel);
 
         playAgainPanel = new JPanel();
         playAgainPanel.setLayout(new FlowLayout());

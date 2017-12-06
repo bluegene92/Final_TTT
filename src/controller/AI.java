@@ -8,14 +8,8 @@ import model.Player;
 
 public class AI {
     public Algorithm algorithm = new AlphaBetaPruning();
-    public static double maxPly;
-    public static int bestPosition;
-    public static int iteration = 0; // For testing purpose
-    public int negativeInfinity = Integer.MIN_VALUE;
-    public int positiveInfinity = Integer.MAX_VALUE;
-    int tick = 0;
-    boolean thinking = true;
     public int bestMove;
+    public int bestCounter;
     public Timer time;
     public int pauseTime = 3000; // 3 seconds
     
@@ -40,39 +34,60 @@ public class AI {
             
         }
     };
+    
+    
+    public void makeDeathMatchMove() {
+        if (Main.gameManager.board.isEmpty()) {
+            System.out.println("running " + algorithm.toString());
+            Main.gameManager.board.selectCell(4, Main.gameManager.mainPlayer);
+        } else if (Main.gameManager.isDeathMatch()) {
+            System.out.println("running death match");
+            algorithm = new DeathMatchAlgorithm();
+            bestCounter = algorithm.runAlgorithm();
+            System.out.println("running " + algorithm.toString());
+            System.out.println("best Counter" + bestCounter);
+//            Main.gameManager.board.slideCell(bestCounter, Main.gameManager.mainPlayer);
+            Main.gameManager.checkForWinner();
+            
+        } else  {
+            algorithm = new AlphaBetaPruning();
+            bestMove = algorithm.runAlgorithm();
+            System.out.println("run alphabeta");
+            System.out.println("running " + algorithm.toString());
+            Main.gameManager.board.selectCell(bestMove, Main.gameManager.mainPlayer);
+        }
+    }
 
     public void makeAVAMove() {
         if (!Main.gameManager.isGameOver()) {
-            /**
-             * Calculate the time the algorithm run.
-             * Subtract it from 3 seconds to find pause time.
-             */
             long startTime = System.currentTimeMillis();
-            bestMove = algorithm.runAlgorithm();
+            if (Main.gameManager.board.isEmpty()) {
+                bestMove = 4;
+            } else {
+                bestMove = algorithm.runAlgorithm();
+            }
             long endTime = System.currentTimeMillis();
             int diff = (int) endTime - (int) startTime;
             if (diff < 3000) {
                 pauseTime = 3000 - diff;
             }
-            System.out.println("Ran algorithm, AVA best move is: " + bestMove);
+            pause(pauseTime);
         }        
     }
     
-    
     public void makeMove() {
         if (!Main.gameManager.isGameOver()) {
-            /**
-             * Calculate the time the algorithm run.
-             * Subtract it from 3 seconds to find pause time.
-             */
             long startTime = System.currentTimeMillis();
-            bestMove = algorithm.runAlgorithm();
+            if (Main.gameManager.board.isEmpty()) {
+                bestMove = 4;
+            } else {
+                bestMove = algorithm.runAlgorithm();
+            }
             long endTime = System.currentTimeMillis();
             int diff = (int) endTime - (int) startTime;
             if (diff < 3000) {
                 pauseTime = 3000 - diff;
             }
-            
             pause(pauseTime);
             System.out.println("Ran algorithm, best move is: " + bestMove);
         }

@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import view.AVAMenu;
 
 public class NetworkManager {
-    private HTTPRequest httprequest;
+    public HTTPRequest httprequest;
     private GameBoard gameBoard;
     private TicTacToeData tictactoeData;
     private GameStatus gameStatus;
@@ -79,12 +79,12 @@ public class NetworkManager {
         String winnerString = statusInfo.substring(index + 1, statusInfo.length());
         if (gameModeString.equalsIgnoreCase("false")) {
             tictactoeData.gameMode = false;
-            AVAMenu.deathMatchCheckBox.setSelected(false);
+//            AVAMenu.deathMatchCheckBox.setSelected(false);
             Main.gameManager.ai.algorithm = new AlphaBetaPruning(); 
         } else if (gameModeString.equalsIgnoreCase("true")) {
-            Main.gameManager.ai.algorithm = new DeathMatch();
+            Main.gameManager.ai.algorithm = new DeathMatchAlgorithm();
             tictactoeData.gameMode = true;
-            AVAMenu.deathMatchCheckBox.setSelected(true);
+//            AVAMenu.deathMatchCheckBox.setSelected(true);
         }
         tictactoeData.gameWinner = winnerString;
     }

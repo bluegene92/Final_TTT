@@ -13,14 +13,7 @@ public class AlphaBetaPruning implements Algorithm {
     
     @Override
     public int runAlgorithm() {
-        // Feed the counter that is running the algorithm
-        
-        /**
-         * Make sure to place the counter that the team is player for.
-         * X - for first player
-         * O - for second player
-         */
-        findBestMoveAlphaBeta(Main.gameManager.board, Player.O, 0);
+        findBestMoveAlphaBeta(Main.gameManager.board, Main.gameManager.mainPlayer, 0);
         return bestPosition;
     }
     
@@ -39,9 +32,6 @@ public class AlphaBetaPruning implements Algorithm {
             return 0;
         }
         
-        /**
-         * If the player is player X
-         */
         if (player.equalsIgnoreCase(Player.X)) {
             for (int i = 0; i < availableCells.size(); i++) {
                 int position = availableCells.get(i).position;
@@ -61,9 +51,6 @@ public class AlphaBetaPruning implements Algorithm {
             } // End for
             return alpha;
         } else {
-            /**
-             * If the player is O
-             */
             for (int i = 0; i < availableCells.size(); i++) {
                 int position = availableCells.get(i).position;
                 Main.gameManager.board.selectCell(position, Player.O);
@@ -81,6 +68,4 @@ public class AlphaBetaPruning implements Algorithm {
             return beta;
         } // End if-else
     } // End alphaBetaPruning    
-
-
 } // End class AlphaBetaPrunning

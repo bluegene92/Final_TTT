@@ -18,14 +18,10 @@ public class GameManager {
     public boolean isDeathMatch = false;
     public GameModeState myState;
     
-    /**
-     * X will always be the first player.
-     * 0 - X turn - AI
-     * 1 - O turn - Human
-     */
-    public String playerTurn = Player.X;
-    public static AI ai;
 
+    public String playerTurn = Player.X;
+    public String mainPlayer = Player.X;
+    public static AI ai;
 
     public GameManager() {
         ai = new AI();
@@ -66,6 +62,21 @@ public class GameManager {
         playerTurn = (playerTurn.equalsIgnoreCase(Player.O)) ? Player.X : Player.O;
     }
     
+    public boolean isDeathMatch() {
+        int count = 0;
+        for (int i = 0; i < 9; ++i) {
+            if (!board.boardModel.cells[i].isEmpty()) {
+                count++;
+            }
+        }
+        if (!board.checkCounterRow(Player.X) &&
+            !board.checkCounterRow(Player.O) &&
+            count == 8) {
+            return true;
+        } 
+        return false;
+    }
+    
     public void setState(GameModeState gms) {
         myState = gms;
     }
@@ -78,6 +89,11 @@ public class GameManager {
         return board.checkCounterRow(Player.X) 
                 || board.checkCounterRow(Player.O) 
                 || board.isBoardEmpty();
+    }
+    
+    public boolean isGameOverDeathMatch() {
+        return board.checkCounterRow(Player.X) 
+            || board.checkCounterRow(Player.O);
     }
 
     public void gameEnd() {

@@ -3,16 +3,13 @@ import model.AVAMode;
 import model.HVAMode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.AVADeathMatchMode;
 import model.Player;
-import org.json.JSONException;
 import view.AVAMenu;
 import view.HVAMenu;
 import view.MainMenu;
 import static view.AVAMenu.deathMatchCheckBox;
+import static view.AVAMenu.playerTwoCheckBox;
 
 public class MenuListener implements ActionListener {
 
@@ -61,28 +58,31 @@ public class MenuListener implements ActionListener {
             Main.gameManager.myState.doAction(Main.gameManager);
             Main.gameManager.startTimer();
         } else if (source == AVAMenu.makeMoveButton) { 
-//            System.out.println("AI make a move");
-//            Main.networkManager.requestData();
-//            int bestMove = 99;
-//            Main.networkManager.sendMove(bestMove);
-//            Main.networkManager.requestData();
-            
-            // Start at AVAMode
-
             Main.gameManager.myState.doAction(Main.gameManager);
-            
         } else if (source == deathMatchCheckBox) {
             Main.gameManager.isDeathMatch = (Main.gameManager.isDeathMatch) ? false : true;
             if (Main.gameManager.isDeathMatch) {
                 Main.gameManager.setState(new AVADeathMatchMode());
-                Main.gameManager.ai.algorithm = new DeathMatch();
+                Main.gameManager.ai.algorithm = new DeathMatchAlgorithm();
+                System.out.println("Algorithm set to: " + Main.gameManager.ai.algorithm.toString());
                 System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
             } else {
                 Main.gameManager.setState(new AVAMode());
                 Main.gameManager.ai.algorithm = new AlphaBetaPruning();
+                System.out.println("Algorithm set to: " + Main.gameManager.ai.algorithm.toString());
                 System.out.println("Set game mode to: " + Main.gameManager.myState.toString());
             }
             System.out.println("Death match: " + Main.gameManager.isDeathMatch);
+        } else if (source == playerTwoCheckBox) {
+            if (Main.gameManager.mainPlayer.equalsIgnoreCase(Player.X)) {
+                Main.gameManager.mainPlayer = Player.O;
+            } else {
+                Main.gameManager.mainPlayer = Player.X;
+            }
+            System.out.println("Player counter is set to: " + Main.gameManager.mainPlayer);
+        } else if (source == AVAMenu.resetBoardButton) {
+            Main.networkManager.sendMove(99);
+            Main.networkManager.requestData();
         }
         
     } // End actionPerformed()

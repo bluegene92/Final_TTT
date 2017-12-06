@@ -19,9 +19,7 @@ public class Main {
     
     public static void main(String[] args) {
         HTTPRequest.setMyID("Team 8");
-        
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 gameManager = new GameManager();

@@ -6,7 +6,7 @@
  * separate systems compete over a server network.
  * 
  * @author Team 8 XOXO
- * @version 1.4
+ * @version 1.5
  * @since 2017-10-20
  */
 package controller;
